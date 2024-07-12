@@ -5,9 +5,6 @@ import asyncio
 import telethon
 from telethon.sync import TelegramClient
 from telethon.errors.rpcerrorlist import SessionPasswordNeededError
-import os
-
-SAVE_DIRECTORY = r"C:\Users\feddo\Desktop\Programming\bot\Telegram-Autoforwarder"
 
 def is_valid_string(string):
     # Verifica se la stringa contiene almeno un numero
@@ -20,8 +17,7 @@ class TelegramForwarder:
         self.api_id = api_id
         self.api_hash = api_hash
         self.phone_number = phone_number
-        session_file = os.path.join(SAVE_DIRECTORY, f"session_{phone_number}")
-        self.client = TelegramClient(session_file, api_id, api_hash)
+        self.client = TelegramClient('session_' + phone_number, api_id, api_hash)
 
     async def list_chats(self):
         await self.client.connect()
@@ -37,8 +33,7 @@ class TelegramForwarder:
 
         # Get a list of all the dialogs (chats)
         dialogs = await self.client.get_dialogs()
-        file_path = os.path.join(SAVE_DIRECTORY, f"chats_of_{self.phone_number}.txt")
-        with open(file_path, "w", encoding='utf-8') as chats_file:
+        with open(f"chats_of_{self.phone_number}.txt", "w", encoding='utf-8') as chats_file:
         # Print information about each chat
             for dialog in dialogs:
                 print(f"Chat ID: {dialog.id}, Title: {dialog.title}".encode('utf-8', errors='replace').decode('utf-8'))
@@ -161,9 +156,9 @@ class TelegramForwarder:
 
 # Function to read credentials from file
 def read_credentials():
-    file_path = os.path.join(SAVE_DIRECTORY, "credentials.txt")	
+
     try:
-        with open(file_path, "r") as file:
+        with open("credentials.txt", "r") as file:
             lines = file.readlines()
             api_id = lines[0].strip()
             api_hash = lines[1].strip()
@@ -175,8 +170,7 @@ def read_credentials():
 
 # Function to write credentials to file
 def write_credentials(api_id, api_hash, phone_number):
-    file_path = os.path.join(SAVE_DIRECTORY, "credentials.txt")
-    with open(file_path, "w") as file:
+    with open("credentials.txt", "w") as file:
         file.write(api_id + "\n")
         file.write(api_hash + "\n")
         file.write(phone_number + "\n")
